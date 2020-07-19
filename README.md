@@ -1,2 +1,2 @@
 # wordy
-Platform For Studying English
+Platform For Studying English Easier
