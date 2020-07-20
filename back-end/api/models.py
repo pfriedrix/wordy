@@ -20,6 +20,14 @@ class User(AbstractUser):
 
     def __repr__(self):
         return '<{self.email}>'
+    
+    def get_xps(self):
+        words = Word.objects.filter(user_id=self.pk)
+        xps = 0
+        for word in words:
+            xps += int(word.progress)
+
+        return xps
 
 
 class Collection(models.Model):

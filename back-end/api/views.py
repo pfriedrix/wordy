@@ -8,7 +8,7 @@ from googletrans import Translator
 from rest_framework import status, views, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import (CreateAPIView, GenericAPIView,
-                                     RetrieveUpdateAPIView, ListCreateAPIView)
+                                     RetrieveUpdateAPIView, ListCreateAPIView, ListAPIView)
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -265,3 +265,25 @@ class ImproveProgressView(views.APIView):
         return Response({
             'detail': message
         }, status=status.HTTP_202_ACCEPTED)
+
+class GetLearntWordsView(ListAPIView):
+    permission_classes = (IsAuthenticated, IsAuthor,)
+    serializer_class = WordSerializer
+
+    def get_queryset(self):
+        user_id = self.request.user.id
+        words = Word.objects.filter(user_id=user_id)
+        learnt_words = list()
+        for word in words:
+            if word.progress == 100:
+                learnt_words.append(word)
+        return learnt_words
+
+class GetXPSView(views.APIView):
+    permission_classes = (IsAuthenticated, IsAuthor,)
+    
+    def get(self, request):
+        user_id = self.request.user.id
+        user = User.objects.get(pk=user_id)
+        xps = user.get_xps() 
+        return Response({'xps': _(str(xps))}, status.HTTP_200_OK)
