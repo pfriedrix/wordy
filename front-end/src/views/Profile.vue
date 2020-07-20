@@ -3,65 +3,36 @@
     <Nav />
     <div class="container">
       <div class="section">
-        <div class="section__title">Profile</div>
-      </div>
-      <v-hover>
-        <template v-slot="{ hover }">
-          <v-card :elevation="hover ? 24 : 0" class="mx-auto pa-6">
-            <v-form v-model="valid" @submit.prevent="editUser">
-              <div class="properties">
-                <h3>
-                  Your firstname:
-                  <template v-if="!editFirstname">
-                    {{ user.first_name }}
-                    <v-btn color="success" width="10" @click="editFirstname = !editFirstname">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                  <template v-else>
-                    <v-text-field
-                      label="New"
-                      solo-inverted
-                      v-model="newFirstname"
-                      :rules="rules"
-                      required
-                    ></v-text-field>
-                  </template>
-                </h3>
-                <h3>
-                  Your lastname:
-                  <template v-if="!editLastname">
-                    {{ user.last_name }}
-                    <v-btn color="success" width="10" @click="editLastname = !editLastname">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </template>
-                  <template v-else>
-                    <v-text-field
-                      label="New"
-                      solo-inverted
-                      v-model="newLastname"
-                      :rules="rules"
-                      required
-                    ></v-text-field>
-                  </template>
-                </h3>
-                <h3>Your e-mail: {{ user.email }}</h3>
-                <p>Collections: {{ user.collections.length }}</p>
-                <p>Words: {{ user.words.length }}</p>
-                <v-btn
-                  v-if="editFirstname || editLastname"
-                  color="success"
-                  width="45%"
-                  type="submit"
-                  :disabled="!valid"
-                >Save</v-btn>
-                <v-btn v-if="editFirstname || editLastname" width="45%" @click="shutup">Cancel</v-btn>
+        <div class="section__title">My profile</div>
+        <v-row justify='center'>
+          <v-card
+          elevation="10"
+          height="500"
+          color="black"
+          shaped
+          style="color:white;"
+          width='400'
+        >
+          <div class="headline text-center">
+            <h3>{{user.first_name}} {{user.last_name}}</h3>
+            <h2>{{user.age}}</h2>
+            <v-row justify="center">
+              <div right style="margin-right: 40px;">
+                <v-icon x-large color="white">mdi-brain</v-icon>
+                x {{learntWords}}
               </div>
-            </v-form>
-          </v-card>
-        </template>
-      </v-hover>
+              <div left>
+                <v-icon x-large color="white">mdi-book</v-icon>
+                x {{user.collections.length}}
+              </div>
+            </v-row>
+            <v-row justify="center">
+              <v-icon x-large color='white'>mdi-puzzle-star</v-icon> x {{ xps }}
+            </v-row>
+          </div>
+        </v-card>
+        </v-row>
+      </div>
     </div>
   </div>
 </template>
@@ -75,10 +46,12 @@ export default {
   data: () => ({
     valid: false,
     user: null,
+    learntWords: 0,
     editLastname: false,
     editFirstname: false,
     newLastname: "",
     newFirstname: "",
+    xps: 0,
     rules: [v => !!v || "Field is required"]
   }),
   mounted() {
@@ -88,7 +61,11 @@ export default {
     getUser() {
       this.$store
         .dispatch("getUser")
-        .then(resp => (this.user = resp.data))
+        .then(resp => {
+          this.user = resp.data;
+          this.getLearntWords(this.user.words);
+          this.getXPS();
+        })
         .catch(err => console.log(err));
     },
     shutup: function() {
@@ -121,29 +98,32 @@ export default {
           .then(() => window.location.reload())
           .catch(err => console.log(err));
       }
+    },
+    getLearntWords: function() {
+      this.$store
+        .dispatch("getLearntWords")
+        .then(resp => {
+          this.learntWords = resp.data.length;
+        })
+        .catch(err => console.log(err));
+    },
+    getXPS: function() {
+      this.$store.dispatch('getXPS')
+      .then(resp => this.xps = resp.data.xps)
     }
   }
 };
 </script>
 
 <style lang="scss" scoped>
+.headline {
+  padding-top: 100px;
+}
+.row {
+  margin-top: 30px;
+}
 .v-card {
-  max-width: 500px;
-  height: 64vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  .propries {
-    width: 100%;
-  }
+  margin-top: 30px;
 }
-p {
-  margin: 10px;
-}
-h3 {
-  margin-bottom: 10px;
-}
-.v-btn {
-  margin-left: 5px;
-}
+
 </style>

@@ -79,10 +79,12 @@
           password: this.password,
           repassword: this.repassword
         }
+        this.loading = true
         this.$store.dispatch('createToken', data)
         .then(() => {
           this.$store.dispatch("getUser")
           this.text = 'Email for confirmation was sent'
+          this.loading = false
         })
         .catch(err => {
           console.log(err)

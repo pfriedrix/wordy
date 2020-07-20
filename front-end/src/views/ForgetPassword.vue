@@ -18,7 +18,7 @@
           >Send Mail</v-btn>
           <div class="problems">
               <router-link to='/sign-up'>
-                  <h4>Want to create new?</h4>
+                  <h4>Want to create a new?</h4>
               </router-link>
             
             <h4>or</h4>

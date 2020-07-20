@@ -173,6 +173,15 @@ export default new Vuex.Store({
           .catch(err => reject(err))
       })
     },
+    getLearntWords({ commit }) {
+      return new Promise((resolve, reject) => {
+        commit('auth_request')
+        axios.defaults.headers.common['Authorization'] = `Bearer ${this.state.token}`
+        axios.get('/user/learnt' )
+          .then(resp => resolve(resp))
+          .catch(err => reject(err))
+      })
+    },
     createWord({commit}, payload) {
       return new Promise((resolve, reject) => {
         commit('auth_request')
@@ -236,6 +245,14 @@ export default new Vuex.Store({
         .catch(err => reject(err))
       })
     },
+    getXPS({commit}) {
+      return new Promise((resolve, reject) => {
+        commit('auth_request')
+        axios.get('/user/xps')
+        .then(resp => resolve(resp))
+        .catch(err => reject(err))
+      })
+    }
 },
   getters: {
   isAuthenticated: state => !!state.token,

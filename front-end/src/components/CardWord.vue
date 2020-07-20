@@ -118,6 +118,6 @@ export default {
 
 .column {
     margin-bottom: 20px;
+    margin-right: 20px;
 }
-
 </style>
